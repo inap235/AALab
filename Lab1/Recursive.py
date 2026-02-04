@@ -1,7 +1,6 @@
 import time
 import matplotlib.pyplot as plt
 
-
 CALL_COUNT = 0
 def fibonacci_naive(n):
     global CALL_COUNT
@@ -21,7 +20,6 @@ def fibonacci_memo(n, memo):
 def performance():
     test_numbers = [5, 10, 15, 20, 25, 30]
     repeats = 3
-
     naive_times = []
     naive_calls = []
     memo_times = []
