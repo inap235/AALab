@@ -3,12 +3,11 @@ import matplotlib.pyplot as plt
 import math
 
 def fibonacci_binet(n):
-    """Binet Formula Method using Golden Ratio"""
     phi = (1 + math.sqrt(5)) / 2
     phi1 = (1 - math.sqrt(5)) / 2
     return round((phi**n - phi1**n) / math.sqrt(5))
 def performance():
-    test_numbers = [5, 10, 15, 20, 25, 30, 35, 40, 50, 100, 500, 1000, 5000, 10000, 16000]
+    test_numbers = [5, 10, 15, 20, 25, 30, 35, 40, 50, 100, 500, 1000]
     repeats = 3
     binet_times = []
     header = "n  " + "  ".join(f"run{i + 1}(ms)" for i in range(repeats)) + "  avg(ms)"

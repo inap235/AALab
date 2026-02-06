@@ -8,7 +8,6 @@ def fibonacci_fast_doubling(n):
         return 1
     
     def fib_doubling(k):
-        """Returns (F(k), F(k+1)) as a tuple"""
         if k == 0:
             return (0, 1)
         f_m, f_m1 = fib_doubling(k // 2)
