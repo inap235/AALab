@@ -93,7 +93,6 @@ def mergeSortOptimized(arr, left, right, threshold=10):
 
 
 def performance():
-    """Performance testing for Merge Sort - Original vs Optimized"""
     test_sizes = [10, 50, 100, 500, 1000, 2000, 5000, 10000]
     repeats = 3
     
@@ -107,7 +106,7 @@ def performance():
     
     for size in test_sizes:
         merge_execs = []
-        for _ in range(repeats):
+        for i in range(repeats):
             arr = [random.randint(1, 10000) for _ in range(size)]
             start = time.perf_counter()
             mergeSort(arr, 0, len(arr) - 1)

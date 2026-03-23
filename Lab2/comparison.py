@@ -14,12 +14,13 @@ IMAGE_DIR = Path(__file__).parent / "images"
 IMAGE_DIR.mkdir(exist_ok=True)
 
 
-# ── wrappers ──────────────────────────────────────────────────────────────────
-def mergeSort(arr):
-    merge_sort_func(arr, 0, len(arr) - 1)
+
 
 def quickSort(arr):
     quick_sort_func(arr, 0, len(arr) - 1)
+
+def mergeSort(arr):
+    merge_sort_func(arr)
 
 def slowSort(arr):
     slowsort(arr, 0, len(arr) - 1)
@@ -28,7 +29,7 @@ def heapSort(arr):
     heap_sort(arr)
 
 
-# ── input generators ─────────────────────────────────────────────────────────
+
 def gen_random_integers(n):
     return [random.randint(1, 10_000) for _ in range(n)]
 
@@ -83,7 +84,7 @@ MARKERS = {"Heap Sort": "o", "Merge Sort": "s",
            "Quick Sort": "^", "Slow Sort": "v"}
 
 
-# ── benchmarking ──────────────────────────────────────────────────────────────
+
 def benchmark(algo_func, generator, sizes, repeats=3):
     """Return list of avg times (ms) per size. None if RecursionError."""
     times = []
@@ -137,7 +138,7 @@ def comprehensive_comparison():
 
         all_results[input_name] = input_results
 
-    # ── plots ─────────────────────────────────────────────────────────────────
+   
 
     # Figure 1: Efficient algorithms – one subplot per input type (2 × 4)
     fig1, axes1 = plt.subplots(2, 4, figsize=(22, 10))

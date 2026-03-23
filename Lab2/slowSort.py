@@ -53,7 +53,7 @@ def performance():
     for size in test_sizes:
         slow_execs = []
         
-        for _ in range(repeats):
+        for i in range(repeats):
             arr = [random.randint(1, 100) for _ in range(size)]
             
             start = time.perf_counter()
@@ -73,7 +73,7 @@ def performance():
     for size in test_sizes:
         slow_execs_opt = []
         
-        for _ in range(repeats):
+        for i in range(repeats):
             arr = [random.randint(1, 100) for _ in range(size)]
             
             start = time.perf_counter()
