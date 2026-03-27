@@ -1,0 +1,1074 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{dirtytalk}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{courier}
+\usepackage{fancyhdr}
+\usepackage[bottom]{footmisc}
+\renewcommand{\headrulewidth}{0pt}
+% Page numbering setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\footrulewidth}{0pt}}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{booktabs}
+
+% Fast compile mode: skips loading image binaries while drafting.
+% Set to \fastcompilefalse for final Overleaf export.
+\newif\iffastcompile
+%\fastcompiletrue 
+\fastcompilefalse % Uncomment this line and comment the above for final version
+\iffastcompile
+  \setkeys{Gin}{draft}
+\fi
+
+% Force dotted lines for sections in the Table of Contents
+\captionsetup[figure]{labelfont=bf, textfont=normalfont, justification=centering, format=plain}
+\renewcommand{\figurename}{Figure}
+% Basic Page Setup
+\geometry{a4paper, portrait, top=20mm, bottom=20mm, left=20mm, right=10mm}
+\linespread{1.5}
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0em}
+
+% Code styling
+\lstset{
+    basicstyle=\fontfamily{pcr}\fontsize{10pt}{10pt}\selectfont,
+    backgroundcolor=\color{lightgray!20},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    breaklines=true,
+    frame=single,
+    tabsize=2
+}
+
+\titleformat{\section}
+  {\centering\bfseries}{}{0em}{\fontsize{13pt}{13pt}\selectfont\MakeUppercase}
+
+\titleformat{\subsection}
+  {\bfseries}{}{0em}{\fontsize{12pt}{12pt}\selectfont}
+
+\titleformat{\subsubsection}
+  {\bfseries}{}{0em}{\fontsize{12pt}{12pt}\selectfont}
+
+% Table formatting
+\renewcommand{\arraystretch}{1.0}
+\usepackage{array}
+\newcommand{\tabletextsize}{\fontsize{11pt}{11pt}\selectfont}
+
+% Figure caption formatting - no period at end
+\DeclareCaptionLabelFormat{noperiodfigure}{#1~#2}
+\captionsetup[figure]{labelformat=noperiodfigure}
+
+% Force dotted lines for sections in the Table of Contents
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% Enumeration list setup for dash-based lists
+\setlist[itemize,1]{label=\normalfont\bfseries\textendash}
+
+\begin{document}
+\begin{titlepage}
+   \thispagestyle{empty}
+   \begin{center}
+    \textbf{\large Ministry of Education of Republic of Moldova}\\[0.1cm]
+    \textbf{\large Technical University of Moldova}\\[0.1cm]
+    \textbf{\large Faculty of Computers, Informatics and Microelectronics}\\[1.2cm]
+
+    \vspace{45mm}
+
+    \textsc{\Large Laboratory work 3:}\\[0.1cm]
+    \textsc{\Large Empirical Analysis of Graph Traversal Algorithms}\\[0.1cm]
+    \textsc{\large Depth First Search and Breadth First Search}\\[0.4cm]
+
+    \vspace{70mm}
+
+    \begin{minipage}[t]{0.4\textwidth}
+    \begin{flushleft} \large
+    \emph{Author:} \\
+    st. gr. FAF-242 \\
+    \emph{Verified:} \\
+    asist. univ. \\
+    \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}[t]{0.4\textwidth}
+    \begin{flushright} \large
+    \emph{} \\
+    Pancenco Ina \\
+    \emph{} \\
+    Fistic Cristofor
+    \end{flushright}
+    \end{minipage}\\[3cm]
+
+    \vspace{4mm}
+    \large Chisinau -- 2026\\[0.5cm]
+
+    \vfill
+    \end{center}
+\end{titlepage}
+
+% =========================
+%   TABLE OF CONTENTS
+% =========================
+\clearpage
+\thispagestyle{empty}
+\tableofcontents
+
+% =========================
+%   ALGORITHM ANALYSIS
+% =========================
+\clearpage
+\phantomsection
+\section*{ALGORITHM ANALYSIS}
+\addcontentsline{toc}{section}{ALGORITHM ANALYSIS}
+
+\phantomsection
+\subsection*{Objective}
+\addcontentsline{toc}{subsection}{Objective}
+
+Study and empirically analyse two fundamental graph traversal algorithms: Depth First
+Search (DFS) and Breadth First Search (BFS), evaluating their execution time across
+different graph types and input sizes.
+
+\phantomsection
+\subsection*{Tasks:}
+\addcontentsline{toc}{subsection}{Tasks}
+
+\begin{enumerate}[itemsep=1pt]
+  \item Implement DFS (recursive variant) and BFS in Python;
+  \item Establish the properties of the input data against which the analysis is performed;
+  \item Choose metrics for comparing the algorithms;
+  \item Perform empirical analysis of the proposed algorithms;
+  \item Make a graphical presentation of the obtained data;
+  \item Draw conclusions on the work done.
+\end{enumerate}
+
+\phantomsection
+\subsection*{Theoretical Notes:}
+\addcontentsline{toc}{subsection}{Theoretical Notes}
+
+\hspace{0.7cm} Empirical analysis complements theoretical complexity analysis by measuring actual
+program behaviour on a real machine. It is particularly valuable when:
+
+\begin{itemize}[itemsep=1pt]
+  \item the theoretical bounds differ only by constant factors;
+  \item the algorithm's performance depends heavily on the structure of the input (e.g.\ graph
+  density, connectivity, diameter);
+  \item comparing two algorithms with the same asymptotic complexity to find which is faster
+  in practice.
+\end{itemize}
+
+The general empirical methodology followed in this work is:
+
+\begin{enumerate}[itemsep=1pt]
+  \item Define the analysis goal and select the efficiency metric.
+  \item Identify the input properties: graph type, number of nodes $n$, edge density.
+  \item Implement the algorithms.
+  \item Generate multiple representative input data sets.
+  \item Execute the program for each data set and record the measurement.
+  \item Analyse and visualise the collected data.
+\end{enumerate}
+
+\phantomsection
+\subsection*{Introduction:}
+\addcontentsline{toc}{subsection}{Introduction}
+
+\hspace{0.8cm} Graph traversal is one of the most fundamental operations in computer science.
+DFS and BFS are two complementary strategies that visit every vertex of a graph exactly once,
+differing only in the order in which vertices are explored.
+
+Both algorithms have the same asymptotic time complexity of $O(V + E)$, where $V$ is the number
+of vertices and $E$ is the number of edges.
+
+This laboratory work investigates these practical differences by measuring wall-clock execution
+time across nineteen distinct graph classes, covering sparse, dense, structured, directed,
+multi-edge, weighted, and regular topologies.
+
+\phantomsection
+\subsection*{Comparison Metric:}
+\addcontentsline{toc}{subsection}{Comparison Metric}
+
+\hspace{0.8cm} The primary metric is \textbf{execution time measured in milliseconds}
+(wall-clock time, averaged over three independent repetitions to reduce measurement noise).
+The error margin is estimated at $\pm 2.5$\,ms.
+
+DFS and BFS both run in $O(V + E)$ time, so the quantity of interest is the \emph{constant
+factor} difference introduced by the different internal data structures and traversal orders.
+
+\phantomsection
+\subsection*{Input Format:}
+\addcontentsline{toc}{subsection}{Input Format}
+
+\hspace{0.8cm} Graphs are represented as adjacency-list dictionaries
+$\{v : [\text{neighbours}]\}$ with integer node labels $0, 1, \ldots, n{-}1$.
+All graph families are benchmarked using the same standard sizes
+$n \in \{100, 200, 300, 400\}$.
+Twelve graph classes are used, covering a wide spectrum of topologies:
+
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Path / Chain} -- a single linear chain $0 - 1 - 2 - \cdots - (n{-}1)$;
+  $E = n-1$. Highlights the worst case for DFS stack depth.
+
+  \item \textbf{Cycle} -- a single cycle $0 - 1 - \cdots - (n{-}1) - 0$;
+  $E = n$. Every node has degree 2; structurally similar to a path with one extra edge.
+
+  \item \textbf{Complete} -- $K_n$, every pair of nodes is connected;
+  $E = \binom{n}{2} = O(n^2)$.
+
+  \item \textbf{Star} -- a central hub node connected to all $n-1$ leaves;
+  $E = n-1$, diameter $= 2$. BFS finishes in two levels; DFS must push $n-1$
+  neighbours onto its stack at once.
+
+  \item \textbf{Complete Bipartite} -- $K_{n/2,\,n/2}$; two disjoint sets where every
+  node in one set is connected to every node in the other; $E = (n/2)^2 = O(n^2)$.
+
+  \item \textbf{Binary Tree} -- a balanced binary tree of depth
+  $\lfloor \log_2 n \rfloor$; $E = V - 1$. DFS follows branches to maximum depth
+  before backtracking; BFS visits level by level.
+
+  \item \textbf{Forest} -- two balanced binary trees connected by a single bridge
+  edge; $E = V - 1$. Tests how both algorithms handle a bottleneck edge separating
+  two components.
+
+  \item \textbf{DAG (Directed Acyclic Graph)} -- a directed chain with skip edges:
+  $i \to i{+}1$ and $i \to i{+}2$; $E \approx 2n$. Demonstrates traversal on
+  directed graphs without cycles.
+
+  \item \textbf{Directed Cycle} -- a directed cycle with additional shortcut
+  edges $i \to i{+}2$ for even $i$; $E \approx 1.5\,n$. The cycle ensures every
+  node is reachable from every other node.
+
+  \item \textbf{Grid} -- a $\lfloor\sqrt{n}\rfloor \times \lfloor\sqrt{n}\rfloor$
+  2-D lattice; each interior node has degree 4. BFS frontier expands as a diamond;
+  DFS spirals deeply before backtracking.
+
+  \item \textbf{Sparse Random} -- Erd\H{o}s--R\'enyi $G(n,\,0.2)$, kept connected;
+  $E \approx 0.1\,n^2$.
+
+  \item \textbf{Dense Random} -- Erd\H{o}s--R\'enyi $G(n,\,0.7)$;
+  $E \approx 0.35\,n^2$.
+
+  \item \textbf{Simple Graph} -- a connected sparse undirected graph
+  (Erd\H{o}s--R\'enyi $G(n,\,0.15)$) with no self-loops and no parallel edges;
+  the canonical definition of a graph. Serves as a baseline for unstructured
+  sparse connectivity.
+
+  \item \textbf{Multigraph} -- an undirected graph where pairs of nodes may share
+  more than one edge; built on a path backbone with every edge duplicated.
+  For DFS/BFS the parallel edges are collapsed to a simple graph, so the
+  traversal comparison reflects how multi-edge density affects neighbour-list size.
+
+  \item \textbf{Pseudograph} -- extends the multigraph by additionally allowing
+  self-loops ($i \to i$). Self-loops are removed before traversal; the comparison
+  highlights how pseudo-topologies compare to their simple-graph equivalents.
+
+  \item \textbf{Directed Multigraph} -- a directed graph with parallel arcs;
+  built on a directed path backbone with every arc duplicated. Collapsed to a
+  simple digraph for traversal.
+
+  \item \textbf{Wheel} -- a hub node connected to all nodes of a $(n{-}1)$-cycle;
+  $E = 2(n-1)$. Combines star-like properties (one centre) with a surrounding ring.
+
+  \item \textbf{Regular Graph} -- a 3-regular (cubic) graph where every node has
+  exactly degree~3. Generated via \texttt{nx.random\_regular\_graph}; $E = 3n/2$.
+  Uniform degree removes topology-driven variance and isolates constant-factor
+  differences between DFS and BFS.
+
+\end{enumerate}
+
+\newpage
+\phantomsection
+\section*{IMPLEMENTATION}
+\addcontentsline{toc}{section}{IMPLEMENTATION}
+
+\hspace{0.8cm} All algorithms are implemented in Python. The source files are
+\texttt{main.py} and \texttt{comp.py}, both containing DFS (recursive) and BFS
+implementations together with benchmarking and visualisation logic.
+
+% ----------------------------------------------------------------
+\phantomsection
+\subsection*{Depth First Search (DFS)}
+\addcontentsline{toc}{subsection}{Depth First Search (DFS)}
+
+\hspace{0.8cm} DFS explores a graph by going as deep as possible along each branch before
+backtracking. In this implementation, DFS uses Python's call stack (recursive variant).
+
+\noindent\hspace*{0.8cm}\textit{Theoretical Complexity:}
+
+\begin{itemize}[itemsep=1pt]
+  \item \textbf{Time:} $O(V + E)$ -- each vertex is pushed and popped from the stack once;
+  each edge is examined once (undirected: twice, once per endpoint).
+  \item \textbf{Space:} $O(V)$ -- the stack holds at most $V$ elements (depth of the deepest
+  reachable path from the source).
+\end{itemize}
+
+\noindent\hspace*{0.8cm}\textit{Algorithm Description:}
+
+\begin{lstlisting}[caption={DFS -- Recursive pseudocode}, label={lst:dfs-iter}]
+DFS_Recursive(graph, v, visited, order):
+  visited.add(v)
+  order.append(v)
+
+  for neighbour in graph[v]:
+    if neighbour not in visited:
+      DFS_Recursive(graph, neighbour, visited, order)
+
+  return order
+\end{lstlisting}
+
+
+\noindent\hspace*{0.8cm}\textit{Python Implementation:}
+
+\begin{lstlisting}[language=Python, caption={Recursive DFS (main.py, comp.py)},
+                   label={lst:dfs-py}]
+def dfs(graph, start, visited=None, path=None):
+  if visited is None:
+    visited = set()
+  if path is None:
+    path = []
+  visited.add(start)
+  path.append(start)
+  for neighbor in graph[start]:
+    if neighbor not in visited:
+      dfs(graph, neighbor, visited, path)
+  return path
+\end{lstlisting}
+
+\noindent\hspace*{0.8cm}\textit{Results:}
+
+On sparse random and tree graphs, DFS execution time grows linearly with $n$, consistent
+with the $O(V + E)$ bound. On path graphs, DFS must push and pop $n$ elements sequentially
+(stack depth $= n$), introducing a noticeable constant-factor overhead compared to BFS.
+
+\noindent\hspace*{0.8cm}\textit{Optimizations:}
+
+\begin{itemize}[itemsep=1pt]
+  \item \textbf{Recursive implementation simplicity} provides a direct and compact mapping
+  of the DFS idea (visit node, recurse into unvisited neighbours).
+  \item \textbf{Raised recursion limit} (configured in \texttt{main.py}) reduces the risk
+  of recursion-depth errors on deep path-like graphs.
+  \item \textbf{Early termination} can be added for goal-directed search: halt as soon as
+  the target vertex is dequeued.
+\end{itemize}
+
+% ----------------------------------------------------------------
+\phantomsection
+\subsection*{Breadth First Search (BFS)}
+\addcontentsline{toc}{subsection}{Breadth First Search (BFS)}
+
+\hspace{0.8cm} BFS explores a graph level by level using a FIFO queue. It guarantees that
+the first time a node is visited it has been reached via the \emph{shortest path}
+(minimum number of hops) from the source node.
+
+\noindent\hspace*{0.8cm}\textit{Theoretical Complexity:}
+
+\begin{itemize}[itemsep=1pt]
+  \item \textbf{Time:} $O(V + E)$ -- each vertex is enqueued and dequeued exactly once;
+  each edge is examined once per endpoint.
+  \item \textbf{Space:} $O(V)$ -- the queue may hold an entire BFS frontier layer, which in
+  the worst case (e.g.\ star or complete graph) contains $O(V)$ nodes simultaneously.
+\end{itemize}
+
+\noindent\hspace*{0.8cm}\textit{Algorithm Description:}
+
+\begin{lstlisting}[caption={BFS pseudocode}, label={lst:bfs}]
+BFS(graph, start):
+    visited = {start}
+    queue   = deque([start])
+    order   = []
+
+    while queue is not empty:
+        v = queue.popleft()
+        order.append(v)
+        for neighbour in graph[v]:
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.push_right(neighbour)
+
+    return order
+\end{lstlisting}
+
+\noindent\hspace*{0.8cm}\textit{Python Implementation:}
+
+\begin{lstlisting}[language=Python, caption={BFS (main.py, comp.py)}, label={lst:bfs-py}]
+from collections import deque
+
+def bfs(graph: dict, start) -> list:
+    visited = {start}
+    queue   = deque([start])
+    order   = []
+    while queue:
+        v = queue.popleft()
+        order.append(v)
+        for neighbour in graph.get(v, []):
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.append(neighbour)
+    return order
+\end{lstlisting}
+
+\noindent\hspace*{0.8cm}\textit{Results:}
+
+BFS execution time also grows linearly in $n$. On path graphs, the BFS frontier is at most
+two nodes wide at every step; consequently, BFS is faster than DFS on paths because
+\texttt{deque.popleft()} costs $O(1)$ and the queue never grows large. On dense graphs
+both algorithms slow down due to the $O(V^2)$ edge set.
+
+
+
+\noindent\hspace*{0.8cm}\textit{Optimizations}
+
+\begin{itemize}[itemsep=1pt]
+  \item \textbf{\texttt{collections.deque}} provides $O(1)$ \texttt{popleft()} -- a plain
+  Python list would give $O(n)$ for the same operation.
+  \item \textbf{Mark visited on enqueue} (not on dequeue) prevents the same node from being
+  added to the queue multiple times, reducing work by a factor proportional to average degree.
+  \item \textbf{Bidirectional BFS} can reduce shortest-path search space from $O(b^d)$ to
+  $O(b^{d/2})$ on large graphs with high branching factor $b$ and shortest-path length $d$.
+\end{itemize}
+
+\newpage
+% ----------------------------------------------------------------
+\phantomsection
+\subsection*{Comprehensive Comparison}
+\addcontentsline{toc}{subsection}{Comprehensive Comparison}
+\label{sec:comparison}
+
+\hspace{0.8cm} Both algorithms were benchmarked on all nineteen graph types described in
+the Input Format section. Each data point is the mean of three independent runs to reduce
+measurement noise. For every graph type, animated GIF visualisations can be generated on a
+small instance ($n = 15$) showing the step-by-step traversal; a static snapshot of the
+final traversal state is included below for each type.
+
+\noindent\hspace*{0.8cm}\textit{Complexity Summary:}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Algorithm} & \textbf{Time} & \textbf{Aux.\ Space} & \textbf{Data Structure}
+  & \textbf{Traversal Order} \\
+\midrule
+DFS (recursive) & $O(V+E)$ & $O(V)$ & Call stack   & depth-first \\
+BFS             & $O(V+E)$ & $O(V)$ & Queue (FIFO) & breadth-first \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ================================================================
+%  1. PATH
+% ================================================================
+\subsubsection*{1.\quad Path / Chain Graph}
+
+A path graph is a single linear chain $0 - 1 - 2 - \cdots - (n{-}1)$ with $E = n - 1$
+edges. Every node except the endpoints has degree~2.
+
+\textit{DFS behaviour.} Starting from node~0, DFS walks the entire chain without ever
+backtracking, pushing one neighbour onto the stack at each step. The stack depth grows
+linearly to~$n$, which causes Python list re-allocations on large inputs.
+
+\textit{BFS behaviour.} BFS also walks left to right, but its queue never holds more
+than two elements at any step (the current frontier is at most one node wide). This
+makes BFS measurably faster on paths ($\sim$20--30\% at $n = 400$).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_path_snapshot.png}
+  \caption{\textit{Path Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a path graph with $n=15$, showing depth-first progression versus level-wise expansion.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_path_scaled.png}
+  \caption{\textit{Path Graph Performance Comparison.}}
+\end{figure}
+\noindent Measured DFS and BFS execution trends across increasing path sizes, highlighting the lower constant-factor overhead of BFS.
+
+% ================================================================
+%  2. CYCLE
+% ================================================================
+\subsubsection*{2.\quad Cycle Graph}
+
+A cycle graph connects nodes in a ring: $0 - 1 - \cdots - (n{-}1) - 0$, adding one
+edge compared to a path. Every node has exactly degree~2.
+
+\textit{DFS behaviour.} DFS picks one direction and follows the ring all the way
+around; the stack depth reaches $n$ just as on a path.
+
+\textit{BFS behaviour.} BFS also proceeds along the ring; the queue holds at most
+two nodes. The performance profile is nearly identical to the path case.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_cycle_snapshot.png}
+  \caption{\textit{Cycle Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a cycle graph with $n=15$, where both traversals follow ring-like connectivity.
+
+% ================================================================
+%  3. COMPLETE
+% ================================================================
+\subsubsection*{3.\quad Complete Graph}
+
+In a complete graph $K_n$ every pair of nodes shares an edge, giving
+$E = \binom{n}{2}$. Every node has degree~$n - 1$.
+
+\textit{DFS behaviour.} From the start node, DFS pushes $n - 1$ neighbours onto the
+stack, then picks one, pushes its $n - 2$ unvisited neighbours, and so on. The stack
+grows to $O(n)$ and every adjacency list is fully scanned, making the total work
+$O(n^2)$.
+
+\textit{BFS behaviour.} BFS enqueues all $n - 1$ neighbours at the first step and
+visits them level by level (depth~1 for all). The queue peaks at $n - 1$ entries.
+Because \texttt{deque} operations are slightly more cache-friendly than list-stack
+push/pop, BFS is marginally faster.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_complete_snapshot.png}
+  \caption{\textit{Complete Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a complete graph with $n=15$, where every node is adjacent to every other node.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_complete_scaled.png}
+  \caption{\textit{Complete Graph Performance Comparison.}}
+\end{figure}
+\noindent DFS and BFS execution time growth on complete graphs, illustrating super-linear behavior caused by the $O(n^2)$ edge set.
+
+% ================================================================
+%  4. STAR
+% ================================================================
+\subsubsection*{4.\quad Star Graph}
+
+A star graph has a single hub node~0 connected to $n - 1$ leaf nodes;
+$E = n - 1$, diameter $= 2$.
+
+\textit{DFS behaviour.} DFS visits the hub, pushes all $n - 1$ leaves, then pops
+them one by one. Each leaf has no unvisited neighbours so it immediately backtracks.
+Traversal finishes in $2(n-1)$ stack operations.
+
+\textit{BFS behaviour.} BFS visits the hub, enqueues all leaves (one BFS level),
+then dequeues each leaf. The queue peaks at $n - 1$ entries. Both algorithms
+perform almost identically.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_star_snapshot.png}
+  \caption{\textit{Star Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a star graph with $n=15$, emphasizing hub-and-spoke exploration from the center node.
+
+% ================================================================
+%  5. BIPARTITE
+% ================================================================
+\subsubsection*{5.\quad Complete Bipartite Graph}
+
+A complete bipartite graph $K_{n/2,\,n/2}$ has two node sets where every node in
+one set is connected to every node in the other; $E = (n/2)^2 = O(n^2)$.
+
+\textit{DFS behaviour.} From a node in set~A, DFS pushes all $n/2$ nodes of set~B,
+then from each B-node pushes all unvisited A-nodes. The pattern alternates deeply.
+
+\textit{BFS behaviour.} BFS visits set~A (level~0), then all of set~B (level~1),
+then remaining A-nodes (level~2). The queue peaks at $n/2$. As with the complete
+graph, the $O(n^2)$ edge count dominates execution time.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_bipartite_snapshot.png}
+  \caption{\textit{Complete Bipartite Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a complete bipartite graph with $n=15$, showing alternation between the two partitions.
+
+% ================================================================
+%  6. BINARY TREE
+% ================================================================
+\subsubsection*{6.\quad Binary Tree}
+
+A balanced binary tree of depth $\lfloor\log_2 n\rfloor$; $E = V - 1$.
+The maximum degree is~3 (parent + two children).
+
+\textit{DFS behaviour.} DFS dives to the leftmost leaf (depth $\log n$), backtracks
+one level, visits the right subtree, and repeats. The stack depth equals the tree
+height $O(\log n)$, which is very memory-efficient.
+
+\textit{BFS behaviour.} BFS visits nodes level by level; the queue width doubles at
+each level, peaking at $\sim n/2$ on the last level. For large trees, BFS therefore
+uses more transient memory than DFS.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_binary_tree_snapshot.png}
+  \caption{\textit{Binary Tree Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a binary tree with $n=15$, contrasting branch-deep traversal with level-order traversal.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_binary_tree_scaled.png}
+  \caption{\textit{Binary Tree Performance Comparison.}}
+\end{figure}
+\noindent DFS and BFS timing across increasing binary-tree sizes, reflecting similar asymptotic behavior with different traversal order constants.
+
+% ================================================================
+%  7. FOREST
+% ================================================================
+\subsubsection*{7.\quad Forest (Two Trees with Bridge)}
+
+Two balanced binary trees are connected by a single bridge edge, giving $E = V - 1$.
+The bridge creates a bottleneck between the two components.
+
+\textit{DFS behaviour.} DFS fully explores one tree before crossing the bridge,
+then explores the second tree. The stack depth is bounded by the height of the
+larger tree.
+
+\textit{BFS behaviour.} BFS discovers the bridge node only when the frontier
+reaches the root of the second tree. The two components are explored
+level-by-level in sequence. Performance is comparable to a single tree of
+the same total size.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_forest_snapshot.png}
+  \caption{\textit{Forest Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a bridged two-tree forest with $n=15$, showing how traversal crosses the bottleneck edge.
+
+% ================================================================
+%  8. DAG
+% ================================================================
+\subsubsection*{8.\quad Directed Acyclic Graph (DAG)}
+
+A DAG built as a directed chain $0 \to 1 \to \cdots \to (n{-}1)$ with
+additional skip edges $i \to i{+}2$; $E \approx 2n$. The graph has no
+cycles and a clear topological order.
+
+\textit{DFS behaviour.} DFS follows the chain forward. Each node has at most
+two outgoing edges, so the behaviour resembles path traversal. Because edges
+are directed, the traversal never revisits earlier nodes.
+
+\textit{BFS behaviour.} BFS proceeds similarly; each level moves one or two
+nodes forward. Both algorithms run in $O(V + E) = O(n)$ time with very
+small constant factors.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_dag_snapshot.png}
+  \caption{\textit{DAG Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a directed acyclic graph with $n=15$, where exploration proceeds forward without cyclic revisits.
+
+% ================================================================
+%  9. DIRECTED CYCLE
+% ================================================================
+\subsubsection*{9.\quad Directed Cycle}
+
+A directed cycle $0 \to 1 \to \cdots \to (n{-}1) \to 0$ with shortcut
+edges $i \to i{+}2$ for even $i$; $E \approx 1.5\,n$.
+
+\textit{DFS behaviour.} DFS follows one direction around the cycle, with
+occasional shortcuts. The cycle back-edge is encountered but discarded
+because the source has already been visited.
+
+\textit{BFS behaviour.} BFS also proceeds around the ring, potentially
+reaching nodes via shortcuts one step earlier. Both algorithms visit
+all $n$ nodes in $O(V + E)$ time.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_directed_cycle_snapshot.png}
+  \caption{\textit{Directed Cycle Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a directed cycle with $n=15$, including shortcut edges that alter visit order.
+
+% ================================================================
+%  10. GRID
+% ================================================================
+\subsubsection*{10.\quad Grid Graph}
+
+A $\lfloor\sqrt{n}\rfloor \times \lfloor\sqrt{n}\rfloor$ 2-D lattice;
+interior nodes have degree~4, edge and corner nodes have degree~3 or~2.
+$E \approx 2n$.
+
+\textit{DFS behaviour.} DFS spirals deeply into one corner of the grid
+before backtracking. The stack depth can reach $n$ in the worst case
+(a Hamiltonian path through the grid).
+
+\textit{BFS behaviour.} BFS expands as a diamond-shaped frontier from the
+start corner, with the frontier width reaching $O(\sqrt{n})$ at mid-traversal.
+Both algorithms show similar linear growth in execution time.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_grid_snapshot.png}
+  \caption{\textit{Grid Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a grid graph with $n=15$, contrasting deep local paths and frontier-based wave expansion.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_grid_scaled.png}
+  \caption{\textit{Grid Graph Performance Comparison.}}
+\end{figure}
+\noindent DFS and BFS runtime trends on grid graphs as node count increases, showing closely matched linear scaling.
+
+% ================================================================
+%  11. SPARSE RANDOM
+% ================================================================
+\subsubsection*{11.\quad Sparse Random Graph}
+
+Erd\H{o}s--R\'enyi $G(n,\,0.2)$, guaranteed connected. Average degree
+$\approx 0.2\,(n-1)$, giving $E \approx 0.1\,n^2$ but with many nodes
+having low degree.
+
+\textit{DFS behaviour.} DFS explores random branches; the stack depth
+varies depending on the structure of the random graph. On average,
+both algorithms exhibit nearly identical linear growth.
+
+\textit{BFS behaviour.} BFS expands level by level through the random
+structure. The constant-factor difference between DFS and BFS is
+negligible on sparse topologies.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_sparse_snapshot.png}
+  \caption{\textit{Sparse Random Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a connected sparse random graph with $n=15$, where both strategies have similar coverage cost.
+
+% ================================================================
+%  12. DENSE RANDOM
+% ================================================================
+\subsubsection*{12.\quad Dense Random Graph}
+
+Erd\H{o}s--R\'enyi $G(n,\,0.7)$; $E \approx 0.35\,n^2$. Most nodes
+have degree close to $0.7\,(n-1)$.
+
+\textit{DFS behaviour.} With high connectivity, DFS quickly reaches every
+node; the stack peaks at $O(n)$. The dominant cost is iterating over the
+large adjacency lists.
+
+\textit{BFS behaviour.} BFS enqueues many neighbours at each step; the
+queue also peaks at $O(n)$. Performance is nearly identical to DFS, with
+the $O(n^2)$ edge set dominating the constant-factor differences.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_dense_snapshot.png}
+  \caption{\textit{Dense Random Graph Traversal.}}
+\end{figure}
+\noindent This figure shows that in a dense random graph, both traversals reach near-complete coverage very quickly because each visited vertex exposes many unvisited neighbors at once. In the DFS panel, the traversal still appears depth-oriented in ordering, but the high branching factor causes frequent local branching and rapid saturation of the visited set. In the BFS panel, the first few queue expansions already include a large fraction of the graph, so the frontier broadens aggressively and then collapses once few unseen vertices remain. The visual similarity of the final states confirms that the key difference is not the set of visited nodes but the order and intermediate frontier dynamics, while the main runtime cost comes from scanning large adjacency lists rather than from stack-versus-queue operations.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_dense_scaled.png}
+  \caption{\textit{Dense Random Graph Performance Comparison.}}
+\end{figure}
+\noindent DFS and BFS execution-time growth on dense random graphs, with super-linear increase driven by the $O(n^2)$ edge set.
+
+% ================================================================
+%  13. SIMPLE GRAPH
+% ================================================================
+\subsubsection*{13.\quad Simple Graph}
+
+A simple graph is a connected undirected graph with no self-loops and no parallel
+edges -- it represents the canonical definition of a graph. Here it is generated
+as an Erd\H{o}s--R\'enyi $G(n,\,0.15)$ instance guaranteed to be connected.
+
+\textit{DFS behaviour.} With low average degree ($\approx 0.15\,(n{-}1)$), DFS
+tends to follow long paths before backtracking. The stack depth varies with the
+diameter of the particular random instance.
+
+\textit{BFS behaviour.} BFS expands outward through the sparse structure level
+by level. Both algorithms display nearly identical linear growth, mirroring the
+sparse random graph case but with a lower average degree.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_simple_snapshot.png}
+  \caption{\textit{Simple Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a simple connected sparse graph with $n=15$, showing characteristic path-following (DFS) versus expanding-frontier (BFS) behaviour.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_simple_scaled.png}
+  \caption{\textit{Simple Graph Performance Comparison.}}
+\end{figure}
+\noindent Execution time trends on a simple sparse random graph, confirming linear scaling for both traversals with minimal constant-factor separation.
+
+% ================================================================
+%  14. MULTIGRAPH
+% ================================================================
+\subsubsection*{14.\quad Multigraph}
+
+A multigraph allows multiple edges between the same pair of nodes. The instance
+here is built on a path backbone where every edge is duplicated, with additional
+skip edges every third step. For traversal, parallel edges are collapsed to a
+simple graph (each node pair appears at most once in the adjacency list).
+
+\textit{DFS behaviour.} After collapsing multi-edges the effective graph is a
+path with sparse chords, so DFS behaves similarly to a path graph with slightly
+reduced stack depth due to skip edges.
+
+\textit{BFS behaviour.} Skip edges shorten the diameter, causing BFS to
+reach distant nodes in fewer levels. Both algorithms remain $O(V + E)$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_multigraph_snapshot.png}
+  \caption{\textit{Multigraph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS states on a multigraph (collapsed to simple) with $n=15$, illustrating how shortcut chords alter traversal depth and frontier width.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_multigraph_scaled.png}
+  \caption{\textit{Multigraph Performance Comparison.}}
+\end{figure}
+\noindent Execution time growth on the multigraph, showing how chord edges reduce both DFS stack depth and BFS diameter compared to a pure path.
+
+% ================================================================
+%  15. PSEUDOGRAPH
+% ================================================================
+\subsubsection*{15.\quad Pseudograph}
+
+A pseudograph further extends the multigraph by permitting self-loops. Self-loops
+are removed before traversal (a self-loop adds no new reachable node); the
+resulting structure retains parallel edges collapsed into a simple graph.
+
+\textit{DFS behaviour.} Comparable to the multigraph case. Self-loops add no
+new connectivity, so removal does not change the DFS order.
+
+\textit{BFS behaviour.} Equally unaffected by self-loop removal. The
+comparison isolates the effect of the multi-edge structure alone.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_pseudograph_snapshot.png}
+  \caption{\textit{Pseudograph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a pseudograph (self-loops removed) with $n=15$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_pseudograph_scaled.png}
+  \caption{\textit{Pseudograph Performance Comparison.}}
+\end{figure}
+\noindent Execution time on the pseudograph closely matches the multigraph, confirming that self-loops do not affect $O(V+E)$ traversal cost once removed.
+
+% ================================================================
+%  16. DIRECTED MULTIGRAPH
+% ================================================================
+\subsubsection*{16.\quad Directed Multigraph}
+
+A directed multigraph has parallel arcs between the same ordered pair of nodes.
+The instance is built as a directed path backbone with every arc doubled, plus
+additional skip arcs every third step. Parallel arcs are collapsed to a simple
+digraph for traversal.
+
+\textit{DFS behaviour.} The directed structure prevents backward traversal. DFS
+follows arcs forward, with skip arcs occasionally jumping two nodes ahead.
+Stack depth is bounded by the longest directed path.
+
+\textit{BFS behaviour.} BFS expands forward through levels; skip arcs reduce
+the number of levels. Performance is similar to the DAG case.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_directed_multigraph_snapshot.png}
+  \caption{\textit{Directed Multigraph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS states on a directed multigraph (collapsed) with $n=15$, showing forward-directed exploration with occasional skips.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_directed_multigraph_scaled.png}
+  \caption{\textit{Directed Multigraph Performance Comparison.}}
+\end{figure}
+\noindent Execution time trends on the directed multigraph, mirroring DAG behaviour with slightly reduced path lengths due to skip arcs.
+
+% ================================================================
+%  17. WHEEL
+% ================================================================
+\subsubsection*{17.\quad Wheel Graph}
+
+A wheel graph $W_n$ connects a single hub node to every node of an $(n{-}1)$-cycle;
+$E = 2(n{-}1)$. Every spoke and rim edge provides two paths between any two rim
+nodes (via the hub or via the rim), making the diameter of $W_n$ equal to~2 for the
+hub and at most~3 between rim nodes.
+
+\textit{DFS behaviour.} Starting from the hub, DFS pushes all $n - 1$ rim nodes
+onto the stack, then traverses the rim chain from one end. The stack peaks at
+$O(n)$ but the adjacency-list scans are light.
+
+\textit{BFS behaviour.} BFS visits the hub (level~0) and all rim nodes (level~1)
+in a single step, making the queue peak at $n - 1$ and completing traversal
+in two levels. BFS is measurably faster on wheels because of the extremely
+short diameter.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_wheel_snapshot.png}
+  \caption{\textit{Wheel Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS visitation states on a wheel graph with $n=15$, emphasising hub-centric connectivity and two-level BFS completion.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_wheel_scaled.png}
+  \caption{\textit{Wheel Graph Performance Comparison.}}
+\end{figure}
+\noindent Execution time on wheel graphs, where BFS completes nearly instantaneously due to diameter~2, while DFS incurs linear stack overhead.
+
+% ================================================================
+%  18. REGULAR GRAPH
+% ================================================================
+\subsubsection*{18.\quad Regular Graph}
+
+A regular graph is one where every node has the same degree~$k$. This instance
+uses $k = 3$ (a cubic graph) generated by \texttt{nx.random\_regular\_graph};
+$E = 3n/2$. Uniform degree eliminates topology-driven variance, making this
+graph ideal for isolating implementation-level differences between DFS and BFS.
+
+\textit{DFS behaviour.} With every node having exactly three neighbours, the
+stack pushes at most two new unvisited neighbours at each step. Stack depth
+scales with the longest DFS path in the random cubic structure.
+
+\textit{BFS behaviour.} Each BFS frontier expansion adds at most two new nodes
+per visited node. Both algorithms exhibit very similar constant factors,
+confirming that uniform degree neutralises topology-driven DFS/BFS differences.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/combined_regular_snapshot.png}
+  \caption{\textit{Regular (Cubic) Graph Traversal.}}
+\end{figure}
+\noindent Final DFS and BFS states on a 3-regular graph with $n=15$, where near-identical visitation patterns highlight uniform structural properties.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{graph_visualizations/comparison_regular_scaled.png}
+  \caption{\textit{Regular Graph Performance Comparison.}}
+\end{figure}
+\noindent Execution time on the cubic graph, showing minimal DFS/BFS separation -- the clearest demonstration that equal degree neutralises traversal differences.
+
+
+
+% ================================================================
+%  OVERALL SUMMARY
+% ================================================================
+\subsubsection*{Overall Summary}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{graph_visualizations/overall_time_comparison_smallest.png}
+  \caption{\textit{Overall Time Comparison at Tested Size.}}
+\end{figure}
+\noindent At the tested size, this chart emphasizes constant-factor effects rather than asymptotic growth. DFS and BFS are close on most graph families, but slight separations appear where traversal structure strongly constrains frontier shape, such as path-like and tree-like cases. Dense families (complete, bipartite, dense random) already start at higher absolute times than sparse families because even small increases in node count imply many additional edge examinations. The figure therefore serves as a baseline: it captures the initial per-topology overhead profile before large-$n$ scaling amplifies complexity differences.
+
+\newpage
+\phantomsection
+\section*{CONCLUSION}
+\addcontentsline{toc}{section}{CONCLUSION}
+
+\hspace{0.8cm} Through this empirical study, both DFS and BFS were implemented and evaluated
+across nineteen representative graph categories, covering sparse, dense, structured, directed,
+multi-edge, weighted, and regular topologies.
+
+Both algorithms share the same asymptotic complexity of $O(V + E)$, and the empirical
+measurements confirm linear growth in execution time as the number of nodes increases
+for all graph types where $E = O(V)$ (path, cycle, star, binary tree, forest, DAG,
+directed cycle, grid, simple, multigraph, pseudograph, directed multigraph, wheel,
+regular, weighted). On dense topologies ($E = O(V^2)$), complete, bipartite, dense
+random, both algorithms exhibit super-linear growth dominated by edge scanning.
+
+The constant-factor differences observed in practice are driven mainly by the interaction
+between data-structure overhead and graph topology. Python's \texttt{collections.deque},
+used by BFS, provides stable $O(1)$ front removals and good block-based locality, while
+the recursive DFS implementation relies on Python's call stack, where function-call overhead
+and recursion depth can become relevant on long path-like traversals. Topology then amplifies or
+reduces these effects: on path and cycle graphs DFS maintains a stack proportional to
+path length while BFS keeps a narrow queue; on star and wheel graphs BFS completes in
+only two levels while DFS must still visit all nodes sequentially; on balanced trees DFS
+retains only logarithmic-depth state while BFS can temporarily hold a large last-level
+frontier; on multigraphs and pseudographs the collapsed simple structure behaves like a
+sparse graph with chords; on regular graphs the uniform degree minimises DFS/BFS
+differences; and on dense graphs the dominant cost becomes edge scanning, which largely
+equalises the two algorithms.
+
+From a practical perspective, DFS remains especially suitable for structure-oriented tasks
+such as cycle detection, topological reasoning, connected-component exploration, and
+backtracking-style searches where deep exploration is useful. BFS is preferable when
+shortest-hop paths are required, when level-order discovery is important, or when the
+target is expected to be close to the source in terms of graph distance. Weighted graphs
+require dedicated algorithms such as Dijkstra or Bellman-Ford for shortest-path queries;
+DFS and BFS provide only unweighted traversal on such structures. Therefore, the
+most effective strategy is topology-aware selection rather than rigid preference: BFS often
+provides better constants on path-like, wheel, and grid inputs, whereas DFS is often a
+strong choice for tree traversal and connectivity analysis.
+
+In summary, for most general-purpose traversal tasks DFS and BFS perform comparably.
+The animated GIF visualisations generated for each graph type clearly show the contrasting
+exploration orders: DFS dives deep before backtracking, while BFS expands outward
+level by level. 
+
+\newpage
+\addcontentsline{toc}{section}{REFERENCES}
+\phantomsection
+\section*{REFERENCES}
+\vspace{-2.5em}
+\renewcommand{\refname}{}
+\begin{thebibliography}{99}
+
+\bibitem{github}
+\textbf{P., I. (2026).} \textit{Analysis of Algorithms}. GitHub Repository.
+\url{https://github.com/inarp235/AALab}
+
+\bibitem{geeks_bfs}
+GeeksforGeeks. (2024). \textit{Breadth First Search or BFS for a Graph}.
+\url{https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/}
+
+\bibitem{geeks_dfs}
+GeeksforGeeks. (2024). \textit{Depth First Search or DFS for a Graph}.
+\url{https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/}
+
+\bibitem{youtube_bfs_dfs}
+CS Dojo. (2018). \textit{Introduction to Graph Theory: BFS and DFS} [Video].
+\url{https://www.youtube.com/watch?v=zaBhtODEL0w}
+
+\bibitem{cormen}
+Cormen, T. H., Leiserson, C. E., Rivest, R. L., \& Stein, C. (2009).
+\textit{Introduction to Algorithms} (3rd ed.). MIT Press.
+
+\bibitem{sedgewick}
+Sedgewick, R., \& Wayne, K. (2011).
+\textit{Algorithms} (4th ed.). Addison-Wesley.
+
+\end{thebibliography}
+\pagebreak
+\end{document}

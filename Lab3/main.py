@@ -1,12 +1,4 @@
-"""
-main.py – Empirical DFS vs BFS analysis across 12 graph topologies.
 
-Generates:
-  graph_visualizations/comparison_<type>_scaled.png   (line charts)
-  graph_visualizations/bar_comparison_<type>_scaled.png
-  graph_visualizations/overall_time_comparison.png
-  graph_visualizations/overall_memory_comparison.png
-"""
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -24,7 +16,6 @@ from matplotlib.lines import Line2D
 
 matplotlib.use("Agg")
 
-# ── Style constants ──────────────────────────────────────────────────────────
 DFS_COLOR   = "#d62728"   # red
 BFS_COLOR   = "#1f77b4"   # blue
 DFS_MARKER  = "o"
@@ -52,7 +43,7 @@ os.makedirs("graph_visualizations", exist_ok=True)
 sys.setrecursionlimit(50_000)
 
 # Output/performance controls
-CREATE_GIFS = False
+CREATE_GIFS = True
 SNAPSHOT_DPI = 120
 CHART_DPI = 120
 
