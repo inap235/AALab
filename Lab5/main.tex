@@ -1,0 +1,477 @@
+﻿\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{dirtytalk}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{courier}
+\usepackage{fancyhdr}
+\usepackage[bottom]{footmisc}
+\renewcommand{\headrulewidth}{0pt}
+% Page numbering setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\footrulewidth}{0pt}}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{booktabs}
+\usepackage{chngcntr}
+\usepackage{indentfirst}
+
+% Fast compile mode: skips loading image binaries while drafting.
+% Set to \fastcompilefalse for final export with all figures rendered.
+\newif\iffastcompile
+\fastcompilefalse  % Use this mode while editing to avoid compile timeout
+%\fastcompilefalse % Final mode: render all figures
+
+\iffastcompile
+  \setkeys{Gin}{draft}
+  \usepackage[draft]{hyperref}
+\else
+  \usepackage{hyperref}
+\fi
+
+% Figure/table caption formatting
+\captionsetup[figure]{labelfont=bf, textfont=bf, justification=centering, format=plain, labelsep=space}
+\captionsetup[table]{labelfont=bf, textfont=bf, justification=raggedleft, singlelinecheck=false, format=plain, position=top, labelsep=space}
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+% Basic Page Setup
+\geometry{a4paper, portrait, top=20mm, bottom=20mm, left=20mm, right=10mm}
+\linespread{1.5}
+\setlength{\parindent}{1.5cm}
+\setlength{\parskip}{0em}
+
+% Code styling
+\lstset{
+    basicstyle=\fontfamily{pcr}\fontsize{10pt}{10pt}\selectfont,
+    backgroundcolor=\color{lightgray!20},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    breaklines=true,
+    frame=single,
+    tabsize=2
+}
+
+\iffastcompile
+  \lstset{numbers=none, frame=none}
+\fi
+
+\titleformat{\section}
+  {\centering\bfseries\fontsize{13pt}{13pt}\selectfont}{\thesection}{0.7em}{\MakeUppercase}
+
+\titleformat{\subsection}
+  {\bfseries\fontsize{12pt}{12pt}\selectfont}{\thesubsection}{0.7em}{}
+
+\titleformat{\subsubsection}
+  {\bfseries\fontsize{12pt}{12pt}\selectfont}{\thesubsubsection}{0.7em}{}
+
+% Number figures, tables and equations by section (1.1, 1.2, ...)
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\counterwithin{equation}{section}
+
+% Table formatting
+\renewcommand{\arraystretch}{1.0}
+\usepackage{array}
+\newcommand{\tabletextsize}{\fontsize{11pt}{11pt}\selectfont}
+
+% Figure caption formatting - no period at end
+\DeclareCaptionLabelFormat{noperiodfigure}{#1~#2}
+\captionsetup[figure]{labelformat=noperiodfigure}
+
+% Force dotted lines for sections in the Table of Contents
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% Enumeration list setup for dash-based lists
+\setlist[itemize,1]{label=\normalfont\bfseries\textendash}
+
+\begin{document}
+\begin{titlepage}
+   \thispagestyle{empty}
+   \begin{center}
+    \textbf{\large Ministry of Education of Republic of Moldova}\\[0.1cm]
+    \textbf{\large Technical University of Moldova}\\[0.1cm]
+    \textbf{\large Faculty of Computers, Informatics and Microelectronics}\\[1.2cm]
+
+    \vspace{45mm}
+
+    \textsc{\Large Laboratory work 5:}\\[0.1cm]
+    \textsc{\Large Greedy Algorithms for Minimum Spanning Trees}\\[0.1cm]
+    \textsc{\large Kruskal's and Prim's Algorithms}\\[0.4cm]
+
+    \vspace{70mm}
+
+    \begin{minipage}[t]{0.4\textwidth}
+    \begin{flushleft} \large
+    \emph{Author:} \\
+    st. gr. FAF-242 \\
+    \emph{Verified:} \\
+    asist. univ. \\
+    \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}[t]{0.4\textwidth}
+    \begin{flushright} \large
+    \emph{} \\
+    Pancenco Ina \\
+    \emph{} \\
+    Fistic Cristofor
+    \end{flushright}
+    \end{minipage}\\[3cm]
+
+    \vspace{4mm}
+    \large Chisinau -- 2026\\[0.5cm]
+
+    \vfill
+    \end{center}
+\end{titlepage}
+
+\clearpage
+\thispagestyle{empty}
+\tableofcontents
+
+\clearpage
+\phantomsection
+\section{ALGORITHM ANALYSIS}
+
+\phantomsection
+\subsection{Objective}
+
+The primary objective of this laboratory work is to study and implement the greedy algorithm design technique, specifically applying it to the classic problem of finding minimum spanning trees (MST) in weighted undirected graphs. This involves implementing two canonical algorithms: Kruskal's algorithm and Prim's algorithm and then conducting rigorous empirical analysis to compare their practical performance characteristics.
+
+Beyond straightforward implementation, the goal is to develop deep intuition for how greedy algorithms function and why they produce optimal results for the MST problem despite their seemingly simplistic approach. Greedy algorithms make locally optimal choices at each step, trusting that these myopic decisions will lead to a globally optimal solution. For the MST problem, this principle works because of the inherent optimal substructure property: any subgraph of an MST is itself a minimum spanning tree of its induced subgraph.
+
+The empirical investigation pivots around understanding how algorithm complexity manifests in real-world execution. Theory predicts that Kruskal runs in approximately $O(E \log E)$ time (dominated by sorting edges) and Prim's algorithm runs in $O(V^2)$ when using an array-based priority queue or $O((V+E)\log V)$ with a binary heap. However, measuring actual wall-clock performance across varying graph sizes, topologies, and densities reveals how constant factors, data structure choices, and implementation details significantly influence practical speed. This empirical approach is essential for understanding when to apply each algorithm in practice.
+
+\phantomsection
+\subsection{Tasks}
+
+\begin{itemize}[itemsep=1pt]
+  \item study the greedy algorithm design technique and its theoretical foundations;
+  \item implement Kruskal's algorithm and Prim's algorithm for finding minimum spanning trees;
+  \item perform empirical runtime analysis and comparison on graphs of varying sizes and topologies;
+  \item increase the number of nodes in the graph and analyze how this influences algorithmic performance;
+  \item generate graphical presentations of the empirical data and relationships observed;
+  \item prepare a comprehensive report documenting findings, visualizations, and conclusions.
+\end{itemize}
+
+\phantomsection
+\subsection{Theoretical Notes}
+
+\textbf{Greedy Algorithms and Optimal Substructure:} A greedy algorithm is an algorithmic paradigm that follows the problem-solving heuristic of making locally optimal choices at each step, with the hope that this selection will lead to a globally optimal solution. The distinguishing characteristics of greedy algorithms are their simplicity, computational efficiency, and their ability to solve certain classes of optimization problems where the greedy choice property holds.
+
+For a greedy algorithm to guarantee optimal results, the problem must satisfy two key properties. First, the \textit{greedy choice property} states that a global optimum can be arrived at by making locally optimal (greedy) choices. Second, the problem must exhibit \textit{optimal substructure}, meaning that an optimal solution to the problem contains within it optimal solutions to subproblems. These properties together ensure that the sequence of locally optimal choices yields a globally optimal solution.
+
+\textbf{The Minimum Spanning Tree Problem:} A spanning tree of a connected undirected graph $G = (V, E)$ is an acyclic subgraph that connects all vertices in $V$ using exactly $|V| - 1$ edges without forming cycles. Among all possible spanning trees, the minimum spanning tree (MST) is the one whose total edge weight sum is minimized. This problem arises in numerous practical applications: finding the minimum-cost way to connect cities with highways, designing efficient electrical grids, clustering in machine learning, and network design optimization.
+
+The MST problem satisfies both greedy properties. For the greedy choice property, consider any edge $e$ of minimum weight that does not create a cycle in the current partial solution. Including $e$ in the MST is safe: no other edge of the same weight can be excluded from some MST without creating a different MST of equal total cost. For optimal substructure, any subtree of an MST is itself an MST for the subset of vertices it spans.
+
+\textbf{Kruskal's Algorithm:} Kruskal's algorithm builds the MST by managing a collection of disjoint sets (forest) of vertices, initialized so that each vertex forms its own singleton set. The algorithm then considers edges in non-decreasing order of weight. For each edge $(u, v)$ encountered, it checks whether $u$ and $v$ belong to different connected components (disjoint sets). If they do, the edge is added to the MST and the two components are merged. If they already belong to the same component, the edge is discarded because including it would create a cycle.
+
+The algorithm's correctness follows from the greedy property: by always selecting the minimum-weight edge that does not create a cycle, we ensure that the final tree has minimum total weight. The time complexity is dominated by sorting the edges in non-decreasing order: $O(E \log E)$. The subsequent disjoint-set operations (find and union) each take nearly constant time when path compression and union by rank heuristics are employed, contributing only $O(E \alpha(V))$ additional time where $\alpha$ is the inverse Ackermann function (effectively constant for practical values of $V$).
+
+\textbf{Prim's Algorithm:} Prim's algorithm builds the MST differently, starting from an arbitrary vertex and growing the tree one vertex at a time. Initially, the MST contains only the starting vertex. At each iteration, the algorithm finds the minimum-weight edge that connects a vertex already in the MST to a vertex outside the MST, adds that edge to the MST, and includes the new vertex in the growing tree. This process continues until all vertices have been incorporated.
+
+The algorithm proceeds by maintaining a priority queue of candidate edges connecting the current tree to vertices outside. When implemented with a binary min-heap, the time complexity is $O((V + E) \log V)$. When implemented with a simple array or Fibonacci heap scanning, the complexity can be reduced to $O(V^2)$ or $O(E + V \log V)$ respectively. Like Kruskal, Prim also satisfies the greedy property: at each step, selecting the minimum-weight edge connecting the tree to outside vertices ensures that the final tree has minimum total weight.
+
+\textbf{Key Differences:} While both algorithms produce an MST of identical minimum weight, they differ in approach and performance characteristics. Kruskal operates on the full edge set, sorting first and then maintaining component connectivity, making it particularly efficient on sparse graphs. Prim grows the tree incrementally from a starting vertex, making it efficient on dense graphs where many vertices can be quickly reached from a small tree. The choice between them depends on graph density and implementation considerations.
+
+\phantomsection
+\subsection{Introduction}
+
+
+This laboratory work implements and empirically evaluates two fundamental greedy algorithms for computing minimum spanning trees on weighted undirected graphs, with special focus on understanding their practical performance characteristics and scaling behaviour across different graph topologies and sizes. The investigation bridges the gap between theoretical algorithm analysis and observed real-world performance, revealing how implementation choices and hardware characteristics interact with algorithmic structure to determine actual execution time.
+
+Minimum spanning trees are among the oldest and most practically important problems in graph theory and computer science. Applications span infrastructure planning (finding minimum-cost networks connecting geographically distributed nodes), image processing (hierarchical clustering of pixels), social network analysis (identifying community structure), and operation research (logistics and supply chain optimization). The availability of efficient algorithms like Kruskal's and Prim's has made MST computation a fundamental building block in many larger systems and analytics pipelines.
+
+Kruskal's algorithm is particularly well-suited for sparse graphs and scenarios where edges are naturally presented in an external list, as might occur when reading network data from a file or database. Its edge-centric perspective makes it intuitive for problems where edges carry semantic meaning---such as potential connections between cities or components. Conversely, Prim's algorithm is frequently preferred for dense graphs and situations where the graph is presented using adjacency structures, as it achieves better practical performance on such inputs through its vertex-centric growth strategy.
+
+The empirical study aims to quantify these practical differences across a broad range of graph characteristics. By systematically varying graph size from small (10 nodes) to large (1000 nodes) and exploring both sparse (edge probability $p=0.3$) and dense (edge probability $p=0.7$) topologies, we can observe how the theoretical complexity bounds manifest as actual elapsed time and identify crossover points where one algorithm becomes preferable to the other. This empirical methodology complements asymptotic analysis by revealing constant factors, memory hierarchy effects, and implementation-specific overheads that significantly impact algorithm selection decisions in practice.
+
+\phantomsection
+\subsection{Comparison Metric}
+
+The primary metric used throughout this empirical study is average execution time, reported in seconds and milliseconds. All timing measurements are performed using Python's \texttt{time.time()} function, which provides reliable wall-clock timing suitable for benchmarking algorithm performance. For each experimental configuration, the algorithm is executed three times independently, and the average result is recorded. This repetition smooths out transient OS scheduling variations and garbage-collection interruptions that could otherwise distort single-run measurements.
+
+The theoretical complexity bounds provide context for interpreting empirical observations. Kruskal's algorithm, implemented with efficient edge sorting and disjoint-set operations with path compression and union by rank, achieves approximately $O(E \log E)$ time complexity. On sparse graphs where $E \approx 0.3 \cdot \binom{n}{2} \approx 0.15 n^2$, this simplifies to roughly $O(n^2 \log n)$. On dense graphs where $E \approx 0.7 \cdot \binom{n}{2} \approx 0.35 n^2$, the sorting cost remains $O(n^2 \log n)$ but with larger constant factors.
+
+Prim's algorithm, particularly when implemented with a binary min-heap priority queue, achieves $O((V + E) \log V)$ time complexity. On sparse graphs, this becomes approximately $O(n \log n)$ since edges dominate the heap operations. On dense graphs where $E \approx 0.35 n^2$, the complexity degrades to $O(n^2 \log n)$ as edge insertion and extraction operations come to dominate. The heap-based implementation of Prim therefore exhibits more pronounced performance scaling with edge density than Kruskal.
+
+These theoretical bounds are compared directly against empirical measurements to validate both the bounds themselves and to understand the relative magnitude of constant factors and implementation overheads. Such comparison is invaluable for practitioners making real-world algorithm selection decisions, as it transforms abstract $O(\cdot)$ notation into concrete execution time guidance.
+
+\phantomsection
+\subsection{Input Format}
+
+All input graphs in this study are synthetically generated as connected weighted undirected graphs using a random graph model with carefully controlled properties. Vertex labels are assigned as integers from $0$ to $n-1$, where $n$ is the number of vertices to be tested. Edge weights are independently derived from the Euclidean distances between random vertex positions in a 2D plane, then scaled to obtain integer weights in a reasonable range. This approach creates graphs with realistic weight distributions that are neither pathologically uniform nor adversarially structured.
+
+Specifically, vertices are assigned random positions in the unit square $[0,1] \times [0,1]$. For each pair of vertices, an edge is created with probability $p$ (the edge density parameter). The weight of each edge is computed as the Euclidean distance between the vertex positions, scaled by a constant factor (10) to obtain integer weights. This geometric approach ensures that the resulting graphs have natural clustering properties and weight distributions, avoiding artificial constructs like uniform random weights that might not reflect real-world network characteristics.
+
+Experiments explore two contrasting density regimes. Sparse graphs use edge probability $p=0.3$, resulting in approximately $0.3 \cdot \binom{n}{2}$ edges overall. This density is typical of many real-world networks such as social graphs, sensor networks, and sparse communication topologies, where most vertices are not directly connected. Dense graphs use probability $p=0.7$, creating approximately $0.7 \cdot \binom{n}{2}$ edges, representing scenarios with high connectivity where most vertex pairs are directly reachable.
+
+Graph sizes tested range from $n=10$ to $n=1000$ in carefully chosen increments, yielding a comprehensive set of experimental points. This range progressively reveals scaling behaviour: small graphs ($n \leq 100$) demonstrate baseline algorithm performance and overhead structures; medium graphs ($100 < n \leq 500$) show the developing impact of algorithmic complexity; large graphs ($n > 500$) reveal the asymptotic regime where theoretical complexity trends dominate.
+
+\newpage
+\phantomsection
+\section{IMPLEMENTATION}
+
+This section describes the concrete implementation of both algorithms in Python, highlighting design decisions and optimization strategies that influence measured performance. The complete source code resides in \texttt{impl.py}, which includes graph generation, both MST algorithms, the empirical benchmark harness, and visualization generation. The implementation leverages widely-available Python libraries: NumPy for efficient graph representation and operations, NetworkX for graph manipulation and layout, Matplotlib for plotting, and Python's built-in \texttt{heapq} module for priority-queue operations.
+
+A key design philosophy emphasizes clarity alongside efficiency. While highly optimized implementations might use compiled languages or specialized libraries, the Python implementation prioritizes readability so that the algorithmic logic remains transparent and verifiable. At the same time, standard Python idioms and efficient data structures are employed throughout to ensure that measured performance reflects genuine algorithmic differences rather than implementation inefficiencies.
+
+\phantomsection
+\subsection{Disjoint Set Data Structure}
+
+Kruskal's algorithm fundamentally relies on efficient disjoint-set (union-find) data structure operations to track connected components. The implementation uses the classic disjoint-set forest representation with two critical optimizations: path compression in the find operation and union by rank in the union operation.
+
+Path compression ensures that when finding the representative (root) of a set, all nodes along the path are redirected to point directly to the root. This flattens the tree structure and dramatically reduces the cost of subsequent find operations on the same nodes. Union by rank ensures that the smaller tree is always attached to the larger tree during union operations, preserving shallow tree depth and maintaining near-linear performance.
+
+With these optimizations, each union-find operation runs in $O(\alpha(n))$ time, where $\alpha$ is the inverse Ackermann function---a function that grows so slowly that $\alpha(n) \leq 4$ for all practical values of $n$. This near-constant amortized time makes the disjoint-set operations negligible compared to the edge-sorting cost in Kruskal's overall complexity.
+
+\begin{lstlisting}[language=Python, caption={Disjoint Set with Path Compression and Union by Rank (impl.py)}, label={lst:disjoint-set-py}]
+class DisjointSet:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # Path compression
+        return self.parent[x]
+
+    def union(self, x, y):
+        root_x = self.find(x)
+        root_y = self.find(y)
+        
+        if root_x == root_y:
+            return False
+        
+        # Union by rank heuristic
+        if self.rank[root_x] < self.rank[root_y]:
+            self.parent[root_x] = root_y
+        elif self.rank[root_x] > self.rank[root_y]:
+            self.parent[root_y] = root_x
+        else:
+            self.parent[root_y] = root_x
+            self.rank[root_x] += 1
+        
+        return True
+\end{lstlisting}
+
+\phantomsection
+\subsection{Kruskal's Algorithm}
+
+Kruskal's algorithm constructs the MST by considering edges in strict non-decreasing order of weight and greedily adding each edge that does not create a cycle. The algorithm maintains a disjoint-set forest representing the current connected components. Initially, each vertex forms its own singleton component.
+
+The algorithm proceeds by sorting all edges by weight and then iterating through them. For each edge $(u, v)$, the algorithm checks whether $u$ and $v$ belong to the same connected component (by comparing the results of find operations on both endpoints). If they are in different components, the edge is added to the MST and the components are merged via a union operation. If they are already connected, the edge is skipped as including it would form a cycle.
+
+The time complexity is dominated by sorting: $O(E \log E)$. Since $E$ can be as large as $O(V^2)$, this simplifies to $O(V^2 \log V)$ in the worst case (complete graph). The disjoint-set operations contribute only $O(E \alpha(V))$ additional time. In practice, Kruskal is particularly efficient on sparse graphs where $E \ll V^2$, as the sorting cost becomes manageable and many possible edges are never even considered.
+
+The algorithm is straightforward to implement and parallelize, and it naturally handles dynamic graph scenarios where edges can be added or queried from external sources. Its edge-centric perspective makes it intuitive for edge-list representations.
+
+\begin{lstlisting}[language=Python, caption={Kruskal's Algorithm (impl.py)}, label={lst:kruskal-py}]
+def kruskal_mst(G):
+    n = G.number_of_nodes()
+    edges = [(G[u][v]["weight"], u, v) for u, v in G.edges()]
+    edges.sort()
+    
+    disjoint_set = DisjointSet(n)
+    mst = []
+    mst_weight = 0
+    steps = []
+    
+    for weight, u, v in edges:
+        if disjoint_set.find(u) != disjoint_set.find(v):
+            disjoint_set.union(u, v)
+            mst.append((u, v, weight))
+            mst_weight += weight
+            
+            current_mst = mst.copy()
+            steps.append((current_mst, (u, v)))
+    
+    return mst, mst_weight, steps
+\end{lstlisting}
+
+\phantomsection
+\subsection{Prim's Algorithm}
+
+Kruskal's algorithm constructs the MST by considering edges in strict non-decreasing order of weight and greedily adding each edge that does not create a cycle. The algorithm maintains a disjoint-set forest representing the current connected components. Initially, each vertex forms its own singleton component.
+
+The algorithm proceeds by sorting all edges by weight and then iterating through them. For each edge $(u, v)$, the algorithm checks whether $u$ and $v$ belong to the same connected component (by comparing the results of find operations on both endpoints). If they are in different components, the edge is added to the MST and the components are merged via a union operation. If they are already connected, the edge is skipped as including it would form a cycle.
+
+The time complexity is dominated by sorting: $O(E \log E)$. Since $E$ can be as large as $O(V^2)$, this simplifies to $O(V^2 \log V)$ in the worst case (complete graph). The disjoint-set operations contribute only $O(E \alpha(V))$ additional time. In practice, Kruskal is particularly efficient on sparse graphs where $E \ll V^2$, as the sorting cost becomes manageable and many possible edges are never even considered.
+
+The algorithm is straightforward to implement and parallelize, and it naturally handles dynamic graph scenarios where edges can be added or queried from external sources. Its edge-centric perspective makes it intuitive for edge-list representations.
+
+\begin{lstlisting}[language=Python, caption={Prim's Algorithm (impl.py)}, label={lst:prim-py}]
+def prim_mst(G):
+    if not G.nodes():
+        return [], 0, []
+    
+    start_node = list(G.nodes())[0]
+    mst = []
+    mst_weight = 0
+    visited = {start_node}
+    edges = [
+        (G[start_node][v]["weight"], start_node, v) 
+        for v in G.neighbors(start_node)
+    ]
+    heapq.heapify(edges)
+    
+    steps = []
+    
+    while edges and len(visited) < G.number_of_nodes():
+        weight, u, v = heapq.heappop(edges)
+        
+        if v not in visited:
+            visited.add(v)
+            mst.append((u, v, weight))
+            mst_weight += weight
+            
+            current_mst = mst.copy()
+            steps.append((current_mst, (u, v)))
+            
+            for neighbor in G.neighbors(v):
+                if neighbor not in visited:
+                    heapq.heappush(
+                        edges, 
+                        (G[v][neighbor]["weight"], v, neighbor)
+                    )
+    
+    return mst, mst_weight, steps
+\end{lstlisting}
+
+\phantomsection
+\subsection{Visualization and Empirical Procedure}
+
+To gain intuitive understanding of algorithm behaviour beyond raw timing measurements, the implementation generates detailed visualizations at multiple levels. Step-by-step visualizations show how each algorithm progressively builds the MST, with edges colour-coded to indicate their status (candidate, selected in current step, or already selected). These visual executions reveal the spatial exploration patterns: Kruskal's tendency to construct scattered components that eventually merge, versus Prim's more localized growth from a single expanding frontier.
+
+The empirical measurement procedure is systematic and reproducible. For each tested graph size $n$, the following workflow is executed: First, both a sparse graph ($p=0.3$) and a dense graph ($p=0.7$) are generated. Both graphs use the same random seed for a fixed size to ensure consistency across experimental runs. Next, Kruskal's algorithm is executed on the sparse graph and the execution time is recorded. This is repeated three times and the average is computed. The same procedure is followed for Kruskal on the dense graph, then for Prim on both sparse and dense variants. Thus, for each size $n$, four timing measurements (Kruskal-sparse, Kruskal-dense, Prim-sparse, Prim-dense) are collected, each representing the average of three independent runs.
+
+All timing data are recorded at high precision and exported for visualization. Performance plots are generated showing execution time versus graph size for each algorithm-density combination, enabling visual comparison and trend identification.
+
+\newpage
+\phantomsection
+\section{VISUALIZATIONS AND RESULTS}
+
+\phantomsection
+\subsection{Algorithm Execution Snapshots}
+
+To better understand how these algorithms operate in practice, detailed visual snapshots are generated showing the state of algorithm computation at selected intermediate stages. These visualizations reveal which edges have been selected, which vertices have been incorporated into the growing MST, and how the algorithms explore and construct the spanning tree structure.
+
+In the Kruskal visualization, the graph is painted to show the current state of the algorithm's execution. Selected edges forming the partial MST are highlighted in bold red, unvisited edges appear in light gray, and vertices are shown in sky blue with labels indicating their component ID. The visualization captures the character of Kruskal's approach: multiple disconnected components coalescing as edges join previously separate subtrees.
+
+The Prim visualization similarly captures the algorithm's state, with selected MST edges highlighted in bold red, the current frontier (edges connecting the MST to outside vertices) shown in orange, unselected edges in light gray, and vertices coloured to distinguish those already in the MST (green) from those not yet added (sky blue). This visualization clearly shows Prim's characteristic growth pattern: a connected tree expanding vertex by vertex from the starting point, with the frontier gradually consuming the entire vertex set.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{optimized/kruskal_snapshot.png}
+  \caption{\textit{Kruskal's Algorithm Execution Snapshot showing partial MST composition}}
+\end{figure}
+The snapshot captures Kruskal partway through execution and illustrates how the algorithm greedily selects minimum-weight edges, initially forming many small disconnected trees (components) that progressively merge. In this frame, note the scattered red edges representing the MST edges selected so far, and the various connected components that have formed. This pattern reveals why Kruskal is particularly efficient on sparse graphs: the algorithm can quickly scan and reject edges between vertices already in the same component.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{optimized/prim_snapshot.png}
+  \caption{\textit{Prim's Algorithm Execution Snapshot showing frontier-based growth}}
+\end{figure}
+The Prim snapshot illustrates the algorithm's characteristic radial expansion from the starting vertex. Unlike Kruskal's scattered approach, Prim builds a single connected tree that grows outward, incorporating one vertex at a time. In this frame, the green vertices represent those already incorporated into the tree, the red edges show selected MST edges, and the orange edges represent the frontier of candidate edges that could extend the tree further. This localized growth pattern makes Prim particularly cache-friendly on dense graphs where adjacent vertices share many outgoing edges.
+
+
+\phantomsection
+\subsection{Performance Comparison Analysis}
+
+Comprehensive performance measurements were generated directly by \texttt{impl.py} as it executed the empirical benchmarks across the full range of tested graph sizes. The plots display execution times averaged over three independent runs for each configuration, providing a representative view of algorithm performance across different scales and topologies. These figures enable multiple types of analysis: comparing algorithm performance for fixed density, comparing the impact of density for fixed algorithm, and identifying crossover points where algorithm preferences change.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{optimized/kruskal_performance.png}
+  \caption{\textit{Kruskal's Algorithm Runtime on Sparse Graphs}}
+\end{figure}
+The Kruskal performance plot shows execution time increasing with graph size for both sparse and dense graphs. On sparse graphs, the growth rate is relatively moderate since edge sorting dominates and the number of edges is proportional to $n$. On dense graphs, the growth accelerates more sharply with graph size as the number of edges approaches $n^2$, and the sorting cost becomes increasingly dominant. This pattern empirically confirms the $O(E \log E)$ theoretical bound.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{optimized/prim_performance.png}
+  \caption{\textit{Prim's Algorithm Runtime on Dense Graphs}}
+\end{figure}
+The Prim performance plot shows a different growth pattern than Kruskal. On sparse graphs, performance scaling is quite favorable as the algorithm can quickly identify minimum-weight edges without traversing the full edge set. On dense graphs, performance degrades more significantly as each vertex addition requires scanning and heap-processing many adjacent edges. The heap-based implementation shows the characteristic $O((V+E) \log V)$ scaling, with the $E \log V$ dominance becoming apparent on dense graphs.
+
+
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{optimized/overall_comparison.png}
+  \caption{\textit{Comprehensive Performance Comparison: All Configurations}}
+\end{figure}
+The unified chart consolidates all four experimental curves, providing a holistic view of relative algorithm performance. The plot clearly shows four distinct regimes: Prim-sparse (lowest), Kruskal-sparse (middle-low), Prim-dense (middle-high), and Kruskal-dense (highest). This visualization immediately supports practical decision-making: for sparse graphs, choose Prim; for dense graphs, also choose Prim; Kruskal is most competitive on sparse graphs but globally Prim demonstrates superior practical performance across the tested range.
+
+\newpage
+\phantomsection
+\section*{CONCLUSION}
+\addcontentsline{toc}{section}{CONCLUSION}
+
+This laboratory work investigated how greedy methods solve the minimum spanning tree problem in both theory and practice. The study covered the complete workflow: understanding the greedy choice principle, implementing Kruskal's and Prim's algorithms, generating controlled graph inputs, measuring runtime over repeated trials, and interpreting the outcomes through visual analysis. The final result is not only a functional implementation of both algorithms, but also a clear empirical comparison of their behaviour under different graph densities and sizes.
+
+From a correctness perspective, both implementations produced valid minimum spanning trees for all tested cases. The measured total weights matched as expected, which confirms that both methods reach the same optimal objective even though they build the tree in very different ways. Kruskal processes globally sorted edges and connects components when safe, while Prim grows one connected structure from a start node through the current lightest frontier edge. The animations and snapshots made these differences easy to observe and helped validate that each intermediate step remained consistent with the algorithmic rules.
+
+The performance experiments showed that asymptotic complexity alone does not fully explain practical runtime. In this project, Prim was generally faster across the tested range, including many dense cases where the cost of handling large edge sets becomes substantial. Kruskal remained competitive on smaller or moderately sparse instances, especially when sorting overhead stayed limited, but its runtime rose more sharply as the number of candidate edges increased. These observations are aligned with theory, yet the magnitude of differences was driven by implementation details, data structure overhead, and constant factors that are invisible in big-O notation.
+
+A useful takeaway is that algorithm choice should be guided by the structure of the input and by operational constraints, not by formulas alone. When a graph is provided naturally as adjacency relations and grows large, Prim with a heap-based frontier is often a strong practical default. When input is already edge-centric or externally streamed, Kruskal remains attractive because its logic is direct and easy to verify. In both scenarios, implementation quality matters: path compression and union by rank are essential for Kruskal, and efficient priority queue operations are essential for Prim.
+
+The visualization part of the laboratory also added important educational value. Static plots and frame-by-frame executions transformed abstract reasoning into an observable process, making it easier to explain why the algorithms differ in behaviour and where runtime costs arise. This is especially useful when presenting results, because it links measured timing curves with concrete execution dynamics rather than reporting numbers in isolation. The comparison charts, together with sparse-versus-dense experiments, gave a coherent narrative from algorithm design to measurable outcomes.
+
+
+\newpage
+\addcontentsline{toc}{section}{REFERENCES}
+\phantomsection
+\section*{REFERENCES}
+\vspace{-2.5em}
+\renewcommand{\refname}{}
+\begin{thebibliography}{99}
+
+\bibitem{cormen}
+Cormen, T. H., Leiserson, C. E., Rivest, R. L., \& Stein, C. (2009).
+\textit{Introduction to Algorithms} (3rd ed.). MIT Press.
+
+\bibitem{github}
+\textbf{P., I. (2026).} \textit{Analysis of Algorithms Laboratory Work}. GitHub Repository.
+\url{https://github.com/inap235/AALab}
+
+\bibitem{geeksforgeeks_greedy}
+GeeksforGeeks. (2025). \textit{Greedy Algorithms}.
+\url{https://www.geeksforgeeks.org/greedy-algorithms/}
+
+\bibitem{tutorialspoint_greedy}
+TutorialsPoint. (2025). \textit{Greedy Algorithms (Data Structures \& Algorithms)}.
+\url{https://www.tutorialspoint.com/data_structures_algorithms/greedy_algorithms.htm}
+
+\bibitem{scaler_mst}
+Scaler. (2025). \textit{Prim's and Kruskal's Algorithm}.
+\url{https://www.scaler.com/topics/prims-and-kruskal-algorithm/}
+
+\bibitem{wiki_mst}
+Wikipedia. (2025). \textit{Minimum Spanning Tree}.
+\url{https://en.wikipedia.org/wiki/Minimum_spanning_tree}
+
+\end{thebibliography}
+\pagebreak
+\end{document}
